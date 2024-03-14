@@ -1,37 +1,37 @@
 const Task = require("../models/task");
 const express = require("express");
 const router = express.Router();
+const asyncWraper = require("../middleware/async");
 
-router.get("/", async (req, res) => {
-  try {
+router.get(
+  "/",
+  asyncWraper(async (req, res) => {
     const tasks = await Task.find({});
     res.status(200).json({ tasks });
-  } catch (error) {
-    res.status(500).json({ msg: error });
-  }
-});
+  })
+);
 
-router.post("/", async (req, res) => {
-  try {
+router.post(
+  "/",
+  asyncWraper(async (req, res) => {
     const task = await Task.create(req.body);
     res.status(201).json({ task });
-  } catch (error) {
-    res.status(500).json({ msg: error });
-  }
-});
-router.get("/:id", async (req, res) => {
-  try {
+  })
+);
+
+router.get(
+  "/:id",
+  asyncWraper(async (req, res) => {
     const task = await Task.findOne({ _id: req.params.id });
     if (!task) {
       return res.status(404).json({ msg: "Could not find task with that id " });
     }
     res.status(200).json({ task });
-  } catch (error) {
-    res.status(500).json({ msg: error });
-  }
-});
-router.patch("/:id", async (req, res) => {
-  try {
+  })
+);
+router.patch(
+  "/:id",
+  asyncWraper(async (req, res) => {
     const task = await Task.findOneAndUpdate({ _id: req.params.id }, req.body, {
       new: true,
       runValidators: true,
@@ -40,21 +40,18 @@ router.patch("/:id", async (req, res) => {
       return res.status(404).json({ msg: "Could not find task with that id " });
     }
     res.status(200).json({ task });
-  } catch (error) {
-    res.status(500).json({ msg: error });
-  }
-});
+  })
+);
 
-router.delete("/:id", async (req, res) => {
-  try {
+router.delete(
+  "/:id",
+  asyncWraper(async (req, res) => {
     const task = await Task.findOneAndDelete({ _id: req.params.id });
     if (!task) {
       return res.status(404).json({ msg: "Could not find task with that id " });
     }
     res.status(200).json({ task });
-  } catch (error) {
-    res.status(500).json({ msg: error });
-  }
-});
+  })
+);
 
 module.exports = router;
